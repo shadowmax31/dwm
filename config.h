@@ -18,6 +18,16 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
+#define AudioPrev			0x1008ff16
+#define AudioNext			0x1008ff17
+#define AudioPlay 			0x1008ff14
+#define AudioStop 			0x1008ff15
+
+#define AudioRaiseVol 			0x1008ff13 
+#define AudioLowerVol			0x1008ff11
+#define AudioMute			0x1008ff12 
+
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -27,7 +37,7 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{  NULL,      NULL,       "potify",   1 << 8,       False,        -1 },
+	{  NULL,      NULL,       "spotify",   1 << 8,       False,        -1 },
 	{  "mpv",      NULL,      NULL,       0,            True,         -1 },
 };
 
@@ -60,43 +70,57 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "st", NULL };
 static const char *fmcmd[] = { "st", "-e", "nnn", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
+static const char *audioprevcmd[] = { "st", "-e", "playerctl", "previous", NULL };
+static const char *audionextcmd[] = { "st", "-e", "playerctl", "next", NULL };
+static const char *audioplaycmd[] = { "st", "-e", "playerctl", "play-pause", NULL };
+static const char *audiostopcmd[] = { "st", "-e", "playerctl", "stop", NULL };
+static const char *audioraisevolcmd[] = { "st", "-e", "pactl", "set-sink-volume", "0", "+5%", NULL };
+static const char *audiolowervolcmd[] = { "st", "-e", "pactl", "set-sink-volume", "0", "-5%", NULL };
+static const char *audiomutecmd[] = { "st", "-e", "pactl", "set-sink-mute", "0", "toggle", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_e,      spawn,          {.v = fmcmd } },
-	{ MODKEY,                       XK_m,      spawn,          {.v = emacscmd } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	//{ MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_q,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	//{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY,                   XK_r,          spawn,          {.v = dmenucmd } },
+	{ MODKEY,                   XK_Return,     spawn,          {.v = termcmd } },
+	{ MODKEY,                   XK_e,          spawn,          {.v = fmcmd } },
+	{ MODKEY,                   XK_m,          spawn,          {.v = emacscmd } },
+	{ 0,                        AudioPrev,     spawn,          {.v = audioprevcmd } },
+	{ 0,                        AudioNext,     spawn,          {.v = audionextcmd } },
+	{ 0,                        AudioPlay,     spawn,          {.v = audioplaycmd } },
+	{ 0,                        AudioStop,     spawn,          {.v = audiostopcmd } },
+	{ 0,                        AudioRaiseVol, spawn,          {.v = audioraisevolcmd } },
+	{ 0,                        AudioLowerVol, spawn,          {.v = audiolowervolcmd } },
+	{ 0,                        AudioMute,     spawn,          {.v = audiomutecmd } },
+	{ MODKEY,                   XK_b,          togglebar,      {0} },
+	{ MODKEY,                   XK_j,          focusstack,     {.i = +1 } },
+	{ MODKEY,                   XK_k,          focusstack,     {.i = -1 } },
+	{ MODKEY,                   XK_i,          incnmaster,     {.i = +1 } },
+	{ MODKEY,                   XK_d,          incnmaster,     {.i = -1 } },
+	{ MODKEY,                   XK_h,          setmfact,       {.f = -0.05} },
+	{ MODKEY,                   XK_l,          setmfact,       {.f = +0.05} },
+	//{ MODKEY,                   XK_Return,     zoom,           {0} },
+	{ MODKEY,                   XK_Tab,        view,           {0} },
+	{ MODKEY|ShiftMask,         XK_q,          killclient,     {0} },
+	{ MODKEY,                   XK_t,          setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                   XK_f,          setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                   XK_space,      setlayout,      {0} },
+	{ MODKEY|ShiftMask,         XK_space,      togglefloating, {0} },
+	{ MODKEY,                   XK_0,          view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,         XK_0,          tag,            {.ui = ~0 } },
+	{ MODKEY,                   XK_comma,      focusmon,       {.i = -1 } },
+	{ MODKEY,                   XK_period,     focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,         XK_comma,      tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,         XK_period,     tagmon,         {.i = +1 } },
+	TAGKEYS(                    XK_1,                          0)
+	TAGKEYS(                    XK_2,                          1)
+	TAGKEYS(                    XK_3,                          2)
+	TAGKEYS(                    XK_4,                          3)
+	TAGKEYS(                    XK_5,                          4)
+	TAGKEYS(                    XK_6,                          5)
+	TAGKEYS(                    XK_7,                          6)
+	TAGKEYS(                    XK_8,                          7)
+	TAGKEYS(                    XK_9,                          8)
+	//{ MODKEY|ShiftMask,         XK_q,          quit,           {0} },
 };
 
 /* button definitions */
