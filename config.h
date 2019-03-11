@@ -70,13 +70,13 @@ static const char *dmenucmd[] = { "/home/etienne/.dmenu.sh", "-m", dmenumon, "-f
 static const char *termcmd[]  = { "st", NULL };
 static const char *fmcmd[] = { "st", "-e", "nnn", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
-static const char *audioprevcmd[] = { "st", "-e", "playerctl", "previous", NULL };
-static const char *audionextcmd[] = { "st", "-e", "playerctl", "next", NULL };
-static const char *audioplaycmd[] = { "st", "-e", "playerctl", "play-pause", NULL };
-static const char *audiostopcmd[] = { "st", "-e", "playerctl", "stop", NULL };
-static const char *audioraisevolcmd[] = { "st", "-e", "pactl", "set-sink-volume", "0", "+5%", NULL };
-static const char *audiolowervolcmd[] = { "st", "-e", "pactl", "set-sink-volume", "0", "-5%", NULL };
-static const char *audiomutecmd[] = { "st", "-e", "pactl", "set-sink-mute", "0", "toggle", NULL };
+static const char *audioprevcmd[] = { "playerctl", "previous", NULL };
+static const char *audionextcmd[] = { "playerctl", "next", NULL };
+static const char *audioplaycmd[] = { "playerctl", "play-pause", NULL };
+static const char *audiostopcmd[] = { "playerctl", "stop", NULL };
+static const char *audioraisevolcmd[] = { "pactl", "set-sink-volume", "0", "+5%", NULL };
+static const char *audiolowervolcmd[] = { "pactl", "set-sink-volume", "0", "-5%", NULL };
+static const char *audiomutecmd[] = { "pactl", "set-sink-mute", "0", "toggle", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
