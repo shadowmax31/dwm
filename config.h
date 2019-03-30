@@ -28,6 +28,8 @@ static const char *colors[][3]      = {
 #define AudioMute			0x1008ff12 
 
 
+static const char term[] = "urxvt";
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -67,8 +69,8 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "/home/etienne/.scripts/dmenu.sh", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
-static const char *fmcmd[] = { "st", "-e", "nnn", NULL };
+static const char *termcmd[]  = { term, NULL };
+static const char *fmcmd[] = { term, "-e", "nnn", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
 static const char *audioprevcmd[] = { "playerctl", "previous", NULL };
 static const char *audionextcmd[] = { "playerctl", "next", NULL };
